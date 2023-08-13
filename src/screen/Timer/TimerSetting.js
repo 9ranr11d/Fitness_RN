@@ -12,15 +12,29 @@ function TimerSetting({navigation, route}) {
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const tempRecord = useRef({
-    date: "",
-    muscleGroup: [],
-    exerciseName: "",
-    numOfSets: [],
-    weight: [],
-    repPerSet: [],
-    restTimeBtwSets: [],
-  });
+  const handleNumOfSetsPlus = () => {
+    if(numOfSets < 10)
+      setNumOfSets(numOfSets + 1)
+    else
+      Alert.alert("Error", "세트 수가 10세트를 넘었습니다.");
+  }
+
+  const handleNumOfSetsMinus = () => {
+    if(numOfSets > 0)
+      setNumOfSets(numOfSets - 1)
+    else
+      Alert.alert("Error", "세트 수가 없습니다.");
+  }
+
+  // const exerciseRecord = useRef({
+  //   date: "",
+  //   muscleGroups: [],
+  //   exerciseName: "",
+  //   numOfSets: [],
+  //   weights: [],
+  //   repsPerSet: [],
+  //   restTimesBtwSets: [],
+  // });
 
   const numPickerStyles = {
     oneScrollHeight: 50,
@@ -34,15 +48,15 @@ function TimerSetting({navigation, route}) {
     numOfSets: numOfSets,
   }
 
-  const saveRecord = () => {
+  const saveRecord = (record) => {
     realm.write(() => {
-      realm.create("WorkoutRecord", tempRecord);
+      realm.create("WorkoutRecord", record);
     });
   };
 
   useEffect(() => {
     if(route.params?.isCompleted)
-      setNumOfSets(numOfSets + 1)
+      handleNumOfSetsPlus();
   }, [route.params]);
 
   return (
@@ -54,17 +68,13 @@ function TimerSetting({navigation, route}) {
 
         <View>
           <TouchableOpacity
-            onPress={() => {
-              setNumOfSets(numOfSets + 1)
-            }}
+            onPress={handleNumOfSetsPlus}
           >
             <Text style={styles.handleNumOfSets}>+</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => {
-              setNumOfSets(numOfSets - 1)
-            }}
+            onPress={handleNumOfSetsMinus}
           >
             <Text style={styles.handleNumOfSets}>-</Text>
           </TouchableOpacity>
@@ -129,7 +139,8 @@ function TimerSetting({navigation, route}) {
           setIsModalVisible(false);
         }}
         saveRecord={(data) => {
-          tempRecord(data)
+          console.log("Record", data);
+          saveRecord(data);
         }}
       />
     </View>

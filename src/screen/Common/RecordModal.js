@@ -6,8 +6,8 @@ import NumPicker from "./NumPicker";
 const RecordModal = (props) => {
   const [dropDownOpen, setDropDownOpen] = useState(false);
 
-  const [selMuscleGroup, setSelMuscleGroup] = useState([]);
-  const [muscleGroup, setMuscleGroup] = useState([
+  const [selMuscleGroups, setSelMuscleGroups] = useState([]);
+  const [smuscleGroups, setMuscleGroups] = useState([
     { label: "가슴", value: "chest" },
     { label: "등", value: "back" },
     { label: "하체", value: "legs" },
@@ -19,43 +19,82 @@ const RecordModal = (props) => {
 
   const [numOfSets, setNumOfSets] = useState(0);
 
+  const [exerciseName, setExerciseName] = useState("");
+
+  const [trainingSession, setTrainingSession] = useState({
+    weights: [],
+    reps: [],
+    restTimes: [],
+  });
+
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth() + 1;
+  const day = today.getDate();
+
   const numPickerStyles = {
     oneScrollHeight: 30,
     fontSize: 15,
   }
 
-  const tenArr = [ "", "1", "2", "3", "4", "5", "6", "7", "8", "9", ""];
+  const tenArr = [ "", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", ""];
 
-  const setWeightAndReps = () => {
-    const weightAndReps = [];
+  const initTrainingSession = () => {
+    const _trainingSession = [];
 
     for(let i = 0; i < numOfSets + 1; i++) {
-      weightAndReps.push(
+      _trainingSession.push(
         <View key={i} style={styles.line}>
+          <Text style={styles.numOfSet}>
+            {i + 1}
+          </Text>
+
           <TextInput
             placeholder="무게"
             keyboardType="number-pad"
             numberOfLines={1}
             maxLength={3}
-            style={styles.weightAndRepsInput}
+            style={styles.trainingSessionInput}
+            value={trainingSession.weights[i]}
+            onChangeText={(text) => {
+              const prevTrainingSession = {...trainingSession};
+              prevTrainingSession.weights[i] = text;
+              setTrainingSession(prevTrainingSession);
+            }}
           />
-
-          <Text style={styles.numOfSet}>
-            {i + 1}
-          </Text>
 
           <TextInput
             placeholder="횟수"
             keyboardType="number-pad"
             numberOfLines={1}
             maxLength={3}
-            style={styles.weightAndRepsInput}
+            style={styles.trainingSessionInput}
+            value={trainingSession.reps[i]}
+            onChangeText={(text) => {
+              const prevTrainingSession = {...trainingSession};
+              prevTrainingSession.reps[i] = text;
+              setTrainingSession(prevTrainingSession);
+            }}
+          />
+
+          <TextInput
+            placeholder="휴식 시간"
+            keyboardType="number-pad"
+            numberOfLines={1}
+            maxLength={3}
+            style={styles.trainingSessionInput}
+            value={trainingSession.restTimes[i]}
+            onChangeText={(text) => {
+              const prevTrainingSession = {...trainingSession};
+              prevTrainingSession.restTimes[i] = text;
+              setTrainingSession(prevTrainingSession);
+            }}
           />
         </View>
       );
     }
 
-    return weightAndReps;
+    return _trainingSession;
   }
 
   return(
@@ -71,6 +110,11 @@ const RecordModal = (props) => {
       <View style={styles.background}>
         <View style={styles.content}>
           <Text>기록</Text>
+
+          <View style={styles.line}>
+            <Text>날짜</Text>
+            <Text>{year}-{month}-{day}</Text>
+          </View>
           
           <View style={styles.line}>
             <Text>운동 부위</Text>
@@ -78,14 +122,14 @@ const RecordModal = (props) => {
             <View>
               <DropDownPicker
                 open={dropDownOpen}
-                value={selMuscleGroup}
-                items={muscleGroup}
+                value={selMuscleGroups}
+                items={smuscleGroups}
                 setOpen={setDropDownOpen}
-                setValue={setSelMuscleGroup}
-                setItems={setMuscleGroup}
+                setValue={setSelMuscleGroups}
+                setItems={setMuscleGroups}
                 multiple={true}
                 min={1}
-                max={muscleGroup.length}
+                max={smuscleGroups.length}
                 placeholder="운동한 부위를 선택해주세요."
                 mode="BADGE"
                 showBadgeDot={false}
@@ -94,7 +138,16 @@ const RecordModal = (props) => {
           </View>
 
           <View style={styles.line}>
-            <Text>운동 부위</Text>
+            <Text>운동 이름</Text>
+            <TextInput
+              placeholder="운동 이름"
+              value={exerciseName}
+              onChangeText={setExerciseName}
+            />
+          </View>
+
+          <View style={styles.line}>
+            <Text>세트 수</Text>
 
             <NumPicker
               numArr={tenArr}
@@ -106,21 +159,27 @@ const RecordModal = (props) => {
           </View>
 
           <View style={styles.line}>
-            <Text>세트 수</Text>
-            <Text>{props.data.numOfSets}</Text>
-          </View>
-
-          <View style={styles.line}>
             <Text>무게/횟수{numOfSets}</Text>
 
             <ScrollView>
-              {setWeightAndReps()}
+              {initTrainingSession()}
             </ScrollView>
           </View>
 
           <View style={styles.line}>
             <TouchableOpacity
-              onPress={props.setInVisible}
+              onPress={() => {
+                props.saveRecord({
+                  id: new Realm.BSON.ObjectId(),
+                  date: `${year}-${month}-${day}`,
+                  muscleGroups: selMuscleGroups,
+                  exerciseName: exerciseName,
+                  numOfSets: numOfSets + 1,
+                  weights: trainingSession.weights,
+                  repsPerSet: trainingSession.reps,
+                  restTimesBtwSets: trainingSession.restTimes,
+                })
+              }}
             >
               <Text>기록</Text>
             </TouchableOpacity>
@@ -154,16 +213,16 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
   },
-  weightAndRepsInput: {
+  trainingSessionInput: {
     flex: 2,
-    borderWidth: 1,
-    borderColor: "#000",
+    // borderWidth: 1,
+    // borderColor: "#000",
     textAlign: "center",
   },
   numOfSet: {
     flex: 1,
-    borderWidth: 1,
-    borderColor: "#000",
+    // borderWidth: 1,
+    // borderColor: "#000",
     textAlign: "center",
   }
 });
