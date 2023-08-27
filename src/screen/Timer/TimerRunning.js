@@ -1,22 +1,49 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import RecordModal from "../Common/RecordModal";
 
 function TimerRunning({navigation, route}) {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isReservation, setIsReservation] = useState(false);
+
   const [timerCount, setTimerCount] = useState(route.params.restTime - 1);
+
+  const tempRecord = useRef(route.params.tempRecord);
+
+  const handleReservation = () => {
+    setIsReservation(!isReservation);
+  }
 
   useEffect(() => {
     timerCount > 0
       ? setTimeout(() => {
           setTimerCount(timerCount - 1) 
         }, 1000)
-      : navigation.navigate("TimerSetting", {isCompleted: true})
+      : navigation.navigate(
+          "TimerSetting",
+          {
+            isCompleted: true,
+            tempRecord: tempRecord.current,
+            isReservation: isReservation,
+          }
+        )
   }, [timerCount]);
 
+  useEffect(() => {
+    const prevTempRecord = {...tempRecord.current};
+    prevTempRecord.numOfSets = prevTempRecord.numOfSets + 1;
+    prevTempRecord.restTimesBtwSets.push(route.params.restTime.toString());
+    tempRecord.current = prevTempRecord;
+  }, []);
+
   return (
-    <View style = {styles.bgBox}>
+    <View style = {styles.background}>
       <View style={styles.numOfSetsBox}>
+        <Text>
+          {isReservation ? `[예약 됨] ${tempRecord.current.exerciseName}` : ""}
+        </Text>
         <Text style={styles.numOfSets}>
-          세트 수 : {route.params.numOfSets + 1}
+          세트 수 : {tempRecord.current.numOfSets}
         </Text>
       </View>
 
@@ -26,20 +53,51 @@ function TimerRunning({navigation, route}) {
         </Text>
       </View>
 
-      <TouchableOpacity
-        style={styles.btn}
-        onPress={() => navigation.goBack()}
-      >
-        <Text style={styles.btnStr}>
-          정지
-        </Text>
-      </TouchableOpacity>
+      <View style={styles.btnBox}>
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={() => {
+            setIsModalVisible(true);
+          }}
+        >
+          <Text style={styles.btnStr}>
+            임시 저장/{isReservation ? "예약 취소" : "예약"}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={styles.btnStr}>
+            정지
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <RecordModal
+        isVisible={isModalVisible}
+        data={tempRecord.current}
+        setInVisible={() => {
+          setIsModalVisible(false);
+        }}
+        saveRecord={(data) => {
+          tempRecord.current = data;
+          console.log("Temp Record", tempRecord.current);
+        }}
+        constraint={true}
+        isScrollEnabled={true}
+        isRecord={false}
+        isReserve={true}
+        changeReservation={handleReservation}
+        reservation={isReservation}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  bgBox: {
+  background: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -59,11 +117,15 @@ const styles = StyleSheet.create({
   restTime: {
     fontSize: 40,
   },
+  btnBox: {
+    flex: 1,
+  },
   btn: {
     flex: 1,
   },
   btnStr: {
-    fontSize: 15,
+    fontSize: 20,
+    textAlign: "center",
   },
 });
 

@@ -29,6 +29,7 @@ const NumPicker = (props) => {
         onScrollEndDrag={(e) => handleOnScroll(e)}
         scrollEventThrottle={0}
         decelerationRate={"fast"}
+        scrollEnabled={props.isScrollEnabled}
       >
         {props.numArr.map((num, index) => (
           <Text

@@ -10,31 +10,48 @@ function TimerSetting({navigation, route}) {
 
   const [numOfSets, setNumOfSets] = useState(0);
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState({
+    isRecord: false,
+    isTempRecord: false,
+  });
+
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth() + 1;
+  const day = today.getDate();
 
   const handleNumOfSetsPlus = () => {
-    if(numOfSets < 10)
-      setNumOfSets(numOfSets + 1)
+    if(numOfSets < 10) {
+      setNumOfSets(numOfSets + 1);
+      
+      const prevTempRecord = {...tempRecord.current};
+      prevTempRecord.numOfSets = prevTempRecord.numOfSets + 1;
+      tempRecord.current = prevTempRecord;
+    }
     else
       Alert.alert("Error", "세트 수가 10세트를 넘었습니다.");
   }
 
   const handleNumOfSetsMinus = () => {
-    if(numOfSets > 0)
-      setNumOfSets(numOfSets - 1)
+    if(numOfSets > 0) {
+      setNumOfSets(numOfSets - 1);
+      const prevTempRecord = {...tempRecord.current};
+      prevTempRecord.numOfSets = prevTempRecord.numOfSets - 1;
+      tempRecord.current = prevTempRecord;
+    }
     else
       Alert.alert("Error", "세트 수가 없습니다.");
   }
 
-  // const exerciseRecord = useRef({
-  //   date: "",
-  //   muscleGroups: [],
-  //   exerciseName: "",
-  //   numOfSets: [],
-  //   weights: [],
-  //   repsPerSet: [],
-  //   restTimesBtwSets: [],
-  // });
+  const tempRecord = useRef({
+    date: `${year}-${month}-${day}`,
+    muscleGroups: [],
+    exerciseName: "",
+    numOfSets: 0,
+    weights: [],
+    repsPerSet: [],
+    restTimesBtwSets: [],
+  });
 
   const numPickerStyles = {
     oneScrollHeight: 50,
@@ -43,20 +60,40 @@ function TimerSetting({navigation, route}) {
 
   const mitArr = ["", "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", ""];
   const secArr = ["", "00", "30", ""];
-  
-  const recordData = {
-    numOfSets: numOfSets,
-  }
 
   const saveRecord = (record) => {
+    Alert.alert("기록", `'${record.exerciseName}'으로 기록되었습니다.`);
+    
+    const result = {
+      ...record,
+      id: new Realm.BSON.ObjectId(),
+    }
     realm.write(() => {
-      realm.create("WorkoutRecord", record);
+      realm.create("WorkoutRecord", result);
     });
+
+    tempRecord.current = {
+      date: `${year}-${month}-${day}`,
+      muscleGroups: [],
+      exerciseName: "",
+      numOfSets: 0,
+      weights: [],
+      repsPerSet: [],
+      restTimesBtwSets: [],
+    }
+
+    setNumOfSets(0);
   };
 
   useEffect(() => {
-    if(route.params?.isCompleted)
+    if(route.params?.isCompleted) {
       handleNumOfSetsPlus();
+      
+      tempRecord.current = {...route.params?.tempRecord};
+      if(route.params?.isReservation) {
+        saveRecord(tempRecord.current);
+      }
+    }
   }, [route.params]);
 
   return (
@@ -100,18 +137,37 @@ function TimerSetting({navigation, route}) {
       </View>
 
       <View style={styles.btnBox}>
-        <TouchableOpacity
-          style={styles.btn}
-          onPress={() => {
-            numOfSets === 0
-              ? Alert.alert("실패", "세트 수가 없습니다.")
-              : setIsModalVisible(true);
-          }}
-        >
-          <Text style={styles.btnStr}>
-            기록
-          </Text>
-        </TouchableOpacity>
+        <View style={styles.recordBtnBox}>
+          <TouchableOpacity
+            style={styles.btn}
+            onPress={() => {
+              setIsModalVisible({
+                isRecord: isModalVisible.isRecord,
+                isTempRecord: true,
+              });
+            }}
+          >
+            <Text style={styles.btnStr}>
+              임시 저장
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.btn}
+            onPress={() => {
+              numOfSets === 0
+                ? Alert.alert("실패", "세트 수가 없습니다.")
+                : setIsModalVisible({
+                    isRecord: true,
+                    isTempRecord: isModalVisible.isTempRecord,
+                  });
+            }}
+          >
+            <Text style={styles.btnStr}>
+              기록
+            </Text>
+          </TouchableOpacity>
+        </View>
 
         <TouchableOpacity
           style={styles.btn}
@@ -123,6 +179,7 @@ function TimerSetting({navigation, route}) {
                   {
                     restTime: (Number(mitArr[currentMit + 1]) * 60) + Number(secArr[currentSec + 1]),
                     numOfSets: numOfSets,
+                    tempRecord: tempRecord.current,
                   }
                 );
           }}
@@ -132,16 +189,45 @@ function TimerSetting({navigation, route}) {
           </Text>
         </TouchableOpacity>
       </View>
+
       <RecordModal
-        isVisible={isModalVisible}
-        data={recordData}
+        isVisible={isModalVisible.isTempRecord}
+        data={tempRecord.current}
         setInVisible={() => {
-          setIsModalVisible(false);
+          setIsModalVisible({
+            isRecord: isModalVisible.isRecord,
+            isTempRecord: false,
+          });
+        }}
+        saveRecord={(data) => {
+          tempRecord.current = data;
+          console.log("Temp Record", tempRecord.current);
+          
+          setNumOfSets(data.numOfSets);
+        }}
+        constraint={false}
+        isScrollEnabled={false}
+        isRecord={false}
+        isReserve={false}
+      />
+
+      <RecordModal
+        isVisible={isModalVisible.isRecord}
+        data={tempRecord.current}
+        setInVisible={() => {
+          setIsModalVisible({
+            isRecord: false,
+            isTempRecord: isModalVisible.isTempRecord,
+          });
         }}
         saveRecord={(data) => {
           console.log("Record", data);
           saveRecord(data);
         }}
+        constraint={false}
+        isScrollEnabled={true}
+        isRecord={true}
+        isReserve={false}
       />
     </View>
   );
@@ -172,12 +258,20 @@ const styles = StyleSheet.create({
   },
   btnBox: {
     flex: 1,
+    width: "100%",
+    alignItems: "center"
+  },
+  recordBtnBox: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
   },
   btn: {
     flex: 1,
   },
   btnStr: {
     fontSize: 20,
+    textAlign: "center",
   },
 });
 
