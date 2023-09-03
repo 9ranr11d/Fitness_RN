@@ -12,7 +12,7 @@ function TimerRunning({navigation, route}) {
 
   const handleReservation = () => {
     setIsReservation(!isReservation);
-  }
+  };
 
   useEffect(() => {
     timerCount > 0
@@ -40,7 +40,7 @@ function TimerRunning({navigation, route}) {
     <View style = {styles.background}>
       <View style={styles.numOfSetsBox}>
         <Text>
-          {isReservation ? `[예약 됨] ${tempRecord.current.exerciseName}` : ""}
+          {isReservation ? `[예약 됨] 운동 이름: ${tempRecord.current.exerciseName}` : ""}
         </Text>
         <Text style={styles.numOfSets}>
           세트 수 : {tempRecord.current.numOfSets}

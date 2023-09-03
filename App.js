@@ -14,17 +14,28 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Timer from "./src/screen/Timer/Timer";
 import Calendar from "./src/screen/Calendar/Calendar";
+import Diary from "./src/screen/Diary/Diary";
 
 const Tab = createBottomTabNavigator();
 
 function App() {
   const TabBarIcon = (focused, name) => {
     let iconName, iconSize;
-  
-    if(name === "Timer")
-      iconName = "timer-outline";
-    else if(name === "Calendar")
-      iconName = "calendar-outline";
+
+    switch(name) {
+      case "Timer":
+        iconName = "timer-outline";
+        break;
+      case "Calendar":
+        iconName = "calendar-outline";
+        break;
+      case "Diary":
+        iconName = "list-outline";
+        break;
+      default:
+        iconName = "ban-outline";
+        break;
+    }
   
     iconSize = focused ? 30 : 20;
   
@@ -55,6 +66,10 @@ function App() {
         <Tab.Screen
           name="Calendar"
           component={Calendar}
+        />
+        <Tab.Screen
+          name="Diary"
+          component={Diary}
         />
       </Tab.Navigator>
     </NavigationContainer>

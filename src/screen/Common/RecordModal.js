@@ -31,7 +31,7 @@ const RecordModal = (props) => {
   const numPickerStyles = {
     oneScrollHeight: 30,
     fontSize: 15,
-  }
+  };
 
   const tenArr = [ "", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", ""];
 
@@ -92,7 +92,7 @@ const RecordModal = (props) => {
     }
 
     return _trainingSession;
-  }
+  };
 
   const handleReset = () => {
     setSelMuscleGroups([]);
@@ -103,7 +103,7 @@ const RecordModal = (props) => {
       repsPerSet: [],
       restTimesBtwSets: [],
     });
-  }
+  };
 
   const handleSetData = () => {
     setSelMuscleGroups(props.data.muscleGroups);
@@ -114,11 +114,11 @@ const RecordModal = (props) => {
       repsPerSet: props.data.repsPerSet,
       restTimesBtwSets: props.data.restTimesBtwSets,
     });
-  }
+  };
 
   useEffect(() => {
     handleSetData();
-  }, [props.isVisible])
+  }, [props.isVisible]);
 
   return(
     <Modal
@@ -189,7 +189,7 @@ const RecordModal = (props) => {
                 <TouchableOpacity
                   style={styles.btn}
                   onPress={() => {
-                    Alert.alert("예약", props.reservation ? "예약 취소되었습니다." : "예약에 되었습니다.");
+                    Alert.alert("예약", props.reservation ? "예약 취소되었습니다." : "예약되었습니다.");
                     props.changeReservation();
                     props.saveRecord({
                       date: props.data.date,

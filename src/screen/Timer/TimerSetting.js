@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native";
 import realm from "../../db/realm";
+import { getCurrentDate } from "../../utils/utils";
 import RecordModal from "../Common/RecordModal";
 import NumPicker from "../Common/NumPicker";
 
 function TimerSetting({navigation, route}) {
+  const { year, month, day } = getCurrentDate();
+  
   const [currentMit, setCurrentMit] = useState(0);
   const [currentSec, setCurrentSec] = useState(0);
 
@@ -14,11 +17,6 @@ function TimerSetting({navigation, route}) {
     isRecord: false,
     isTempRecord: false,
   });
-
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth() + 1;
-  const day = today.getDate();
 
   const handleNumOfSetsPlus = () => {
     if(numOfSets < 10) {
@@ -30,7 +28,7 @@ function TimerSetting({navigation, route}) {
     }
     else
       Alert.alert("Error", "세트 수가 10세트를 넘었습니다.");
-  }
+  };
 
   const handleNumOfSetsMinus = () => {
     if(numOfSets > 0) {
@@ -41,7 +39,15 @@ function TimerSetting({navigation, route}) {
     }
     else
       Alert.alert("Error", "세트 수가 없습니다.");
-  }
+  };
+  
+  // const changeTenFomat = num => {
+  //   let result = num;
+  //   if(num < 10)
+  //     result = `0${num}`;
+
+  //   return result;
+  // };
 
   const tempRecord = useRef({
     date: `${year}-${month}-${day}`,
