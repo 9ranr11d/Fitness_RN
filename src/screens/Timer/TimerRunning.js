@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
-import RecordModal from "../Common/RecordModal";
+import RecordModal from "../../components/RecordModal";
 
-function TimerRunning({navigation, route}) {
+const TimerRunning = ({navigation, route}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isReservation, setIsReservation] = useState(false);
 
@@ -94,7 +94,7 @@ function TimerRunning({navigation, route}) {
       />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   background: {

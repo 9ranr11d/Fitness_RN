@@ -5,7 +5,7 @@ import TimerRunning from "./TimerRunning";
 
 const Stack = createStackNavigator();
 
-function Timer() {
+const Timer = () => {
   return (
     <Stack.Navigator
       initialRouteName="TimerSetting"
@@ -23,6 +23,6 @@ function Timer() {
       />
     </Stack.Navigator>
   );
-}
+};
 
 export default Timer;

@@ -13,4 +13,4 @@ export const getCurrentDate = () => {
   const day = changeTenFomat(today.getDate());
 
   return { year, month, day};
-}
+};

@@ -4,7 +4,7 @@ import realm from "../../db/realm";
 import { getCurrentDate } from "../../utils/utils";
 import { Calendar as _Calendar } from "react-native-calendars"
 
-function Calendar() {
+const Calendar = () => {
   const { year, month, day } = getCurrentDate();
   
   const recordList = realm.objects("WorkoutRecord");
@@ -104,7 +104,7 @@ function Calendar() {
       </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
 

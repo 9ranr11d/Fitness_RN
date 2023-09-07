@@ -244,7 +244,7 @@ const RecordModal = (props) => {
       </View>
     </Modal>
   );
-}
+};
 
 const styles = StyleSheet.create({
   background: {

@@ -1,6 +1,6 @@
 import Realm from "realm";
 
-class WorkoutRecord extends Realm.Object {}
+class WorkoutRecord extends Realm.Object {};
 
 WorkoutRecord.schema = {
   name: "WorkoutRecord",

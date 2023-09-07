@@ -46,7 +46,7 @@ const NumPicker = (props) => {
       </ScrollView>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   restTimeScroll: {

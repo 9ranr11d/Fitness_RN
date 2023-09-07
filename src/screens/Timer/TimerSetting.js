@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native";
 import realm from "../../db/realm";
 import { getCurrentDate } from "../../utils/utils";
-import RecordModal from "../Common/RecordModal";
-import NumPicker from "../Common/NumPicker";
+import RecordModal from "../../components/RecordModal";
+import NumPicker from "../../components/NumPicker";
 
-function TimerSetting({navigation, route}) {
+const TimerSetting = ({navigation, route}) => {
   const { year, month, day } = getCurrentDate();
   
   const [currentMit, setCurrentMit] = useState(0);
@@ -237,7 +237,7 @@ function TimerSetting({navigation, route}) {
       />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   background: {

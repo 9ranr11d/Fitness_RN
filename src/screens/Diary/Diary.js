@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, View,  Text, ScrollView, TouchableOpacity } from "react-native";
 import realm from "../../db/realm";
 
-function Diary() {
+const Diary = () => {
   const recordList = realm.objects("WorkoutRecord");
 
   const delRecord = (obj) => {
@@ -43,7 +43,7 @@ function Diary() {
       </ScrollView>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
 
