@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Modal, StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, Alert } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
+/* Components */
 import NumPicker from "./NumPicker";
 
 const RecordModal = (props) => {

@@ -1,14 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { StyleSheet, View,  Text, ScrollView, TouchableOpacity } from "react-native";
+/* DB */
 import realm from "../../db/realm";
+/* Redux */
+import { useDispatch, useSelector } from "react-redux";
+import { fetchRecord } from "../../../store/actions/recordAction"
 
 const Diary = () => {
-  const recordList = realm.objects("WorkoutRecord");
+  const dispatch = useDispatch();
+  const recordList = useSelector(state => state.recordReducer.payload);
 
   const delRecord = (obj) => {
     realm.write(() => {
       realm.delete(obj);
     });
+    dispatch(fetchRecord());
   };
 
   return(

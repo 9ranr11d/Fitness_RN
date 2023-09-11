@@ -1,9 +1,12 @@
-import React from "react";
-import { StyleSheet } from "react-native";
+import React, { useEffect } from "react";
+import { StyleSheet, Alert } from "react-native";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Ionicons from "react-native-vector-icons/Ionicons";
-/* Screen */
+/* Redux */
+import { fetchRecord } from "../../store/actions/recordAction";
+import { useDispatch, useSelector } from "react-redux";
+/* Screens */
 import Timer from "../screens/Timer/Timer";
 import Calendar from "../screens/Calendar/Calendar";
 import Diary from "../screens/Diary/Diary";
@@ -11,6 +14,10 @@ import Diary from "../screens/Diary/Diary";
 const Tab = createBottomTabNavigator();
 
 const MainNavigation = () => {
+  const dispatch = useDispatch();
+
+  const recordReducer = useSelector(state => state.recordReducer);
+
   const TabBarIcon = (focused, name) => {
     let iconName, iconSize;
 
@@ -38,6 +45,17 @@ const MainNavigation = () => {
       />
     )
   };
+
+  useEffect(() => {
+    dispatch(fetchRecord());
+  }, [dispatch]);
+
+  useEffect(() => {
+    console.log("Record Reducer :", recordReducer);
+    
+    if(recordReducer.msg !== "")
+      Alert.alert("ERROR", `데이터를 받아오지 못했습니다.\n Error: ${recordReducer.msg}`);
+  }, [recordReducer]);
   
   return(
     <NavigationContainer>

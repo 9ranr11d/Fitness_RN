@@ -1,14 +1,8 @@
-import { FETCH_RECORD } from "../types";
+import { FETCH_RECORD, FETCH_RECORD_ERROR } from "../types";
 
 const initState = {
-  id: "",
-  date: "",
-  muscleGroups: [],
-  exerciseName: "",
-  numOfSets: 0,
-  weights: [],
-  repsPerSet: [],
-  restTimesBtwSets: [],
+  payload: [],
+  msg: "",
 };
 
 const recordReducer = (state = initState, action) => {
@@ -16,15 +10,15 @@ const recordReducer = (state = initState, action) => {
     case FETCH_RECORD:
       return {
         ...state,
-        id: action.id,
-        date: action.date,
-        muscleGroups: action.muscleGroups,
-        exerciseName: action.exerciseName,
-        numOfSets: action.numOfSets,
-        weights: action.weights,
-        repsPerSet: action.repsPerSet,
-        restTimesBtwSets: action.restTimesBtwSets,
+        payload: action.payload,
+        msg: "",
       };
+    case FETCH_RECORD_ERROR: {
+      return {
+        ...state,
+        msg: action.payload,
+      };
+    }
     default:
       return state;
   }

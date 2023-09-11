@@ -2,10 +2,10 @@ import React, { useRef } from "react";
 import { ScrollView, StyleSheet, View, Text } from "react-native";
 
 const NumPicker = (props) => {
-  const oneScrollHeight = props.styles.oneScrollHeight;
+  const oneScrollHeight = props.styles.oneScrollHeight; //한칸 높이
 
   const scrollRef = useRef(null);
-
+  
   const handleOnScroll = (e) => {
     const index = Math.round(e.nativeEvent.contentOffset.y / oneScrollHeight);
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+/* Components */
 import RecordModal from "../../components/RecordModal";
 
 const TimerRunning = ({navigation, route}) => {

@@ -10,12 +10,16 @@ import "react-native-get-random-values";
 import React from "react";
 /* Redux */
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
+import {createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
 import rootReducer from "./store/reducers/rootReducer";
 /* Navigation */
 import MainNavigation from "./src/navigation/MainNavigation";
 
-const store = createStore(rootReducer);
+const store = createStore(
+  rootReducer,
+  applyMiddleware(thunk)
+);
 
 const App = () => {
   return(

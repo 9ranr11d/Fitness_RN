@@ -1,13 +1,15 @@
 import React, { useEffect, useState, useRef } from "react";
 import { StyleSheet, View, Text } from "react-native";
-import realm from "../../db/realm";
-import { getCurrentDate } from "../../utils/utils";
 import { Calendar as _Calendar } from "react-native-calendars"
+/* Redux */
+import { useSelector } from "react-redux";
+/* Utils */
+import { getCurrentDate } from "../../utils/utils";
 
 const Calendar = () => {
   const { year, month, day } = getCurrentDate();
   
-  const recordList = realm.objects("WorkoutRecord");
+  const recordList = useSelector(state => state.recordReducer.payload);
 
   const [selDate, setSelDate] = useState(`${year}-${month}-${day}`);  
 

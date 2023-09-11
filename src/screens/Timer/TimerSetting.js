@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native";
+/* DB */
 import realm from "../../db/realm";
+/* Utils */
 import { getCurrentDate } from "../../utils/utils";
+/* Components */
 import RecordModal from "../../components/RecordModal";
 import NumPicker from "../../components/NumPicker";
 
@@ -40,14 +43,6 @@ const TimerSetting = ({navigation, route}) => {
     else
       Alert.alert("Error", "세트 수가 없습니다.");
   };
-  
-  // const changeTenFomat = num => {
-  //   let result = num;
-  //   if(num < 10)
-  //     result = `0${num}`;
-
-  //   return result;
-  // };
 
   const tempRecord = useRef({
     date: `${year}-${month}-${day}`,
