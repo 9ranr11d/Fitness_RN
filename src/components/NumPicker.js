@@ -1,11 +1,17 @@
 import React, { useRef } from "react";
 import { ScrollView, StyleSheet, View, Text } from "react-native";
 
+/**
+ * 숫자 스크롤로 선택
+ * @param {JSON} props.styles oneScrollHeight: 스크롤 한칸 높이, fontSize: 글자 크기
+ */
 const NumPicker = (props) => {
-  const oneScrollHeight = props.styles.oneScrollHeight; //한칸 높이
+  //한칸 높이
+  const oneScrollHeight = props.styles.oneScrollHeight;
 
   const scrollRef = useRef(null);
   
+  //한칸씩 내려가게
   const handleOnScroll = (e) => {
     const index = Math.round(e.nativeEvent.contentOffset.y / oneScrollHeight);
 

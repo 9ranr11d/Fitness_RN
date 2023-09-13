@@ -6,6 +6,9 @@ import TimerRunning from "./TimerRunning";
 
 const Stack = createStackNavigator();
 
+/**
+ * 타이머 네비게이션
+ */
 const Timer = () => {
   return (
     <Stack.Navigator

@@ -4,11 +4,20 @@ import DropDownPicker from "react-native-dropdown-picker";
 /* Components */
 import NumPicker from "./NumPicker";
 
+/**
+ * 기록, 수정, 임시저장
+ * @param {Function} props.saveRecord 기록 버튼 클릭 시
+ * @param {boolean} props.constraint 휴식시간 수정 가능 여부
+ * @param {boolean} props.isScrollEnabled 세트 수 수정 가능 여부
+ * @param {boolean} props.isRecord 기록 버튼 유무
+ * @param {boolean} props.isReserve 예약 버튼 유무
+ * @param {Function} props.changeReservation 예약 버튼 클릭 시
+ * @param {boolean} props.isReserve 예약 버튼 클릭 여부
+ */
 const RecordModal = (props) => {
+  //드롭 다운 메뉴 props
   const [dropDownOpen, setDropDownOpen] = useState(false);
-
   const [selMuscleGroups, setSelMuscleGroups] = useState([]);
-
   const [muscleGroups, setMuscleGroups] = useState([
     { label: "가슴", value: "chest" },
     { label: "등", value: "back" },
@@ -36,6 +45,7 @@ const RecordModal = (props) => {
 
   const tenArr = [ "", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", ""];
 
+  //세트 수에 따라 TextInput 셋팅
   const initTrainingSession = () => {
     const _trainingSession = [];
 

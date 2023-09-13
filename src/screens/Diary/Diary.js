@@ -6,10 +6,15 @@ import realm from "../../db/realm";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchRecord } from "../../../store/actions/recordAction"
 
+/**
+ * 기록 검색/조회
+ */
 const Diary = () => {
   const dispatch = useDispatch();
+
   const recordList = useSelector(state => state.recordReducer.payload);
 
+  //기록 삭제
   const delRecord = (obj) => {
     realm.write(() => {
       realm.delete(obj);

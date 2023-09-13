@@ -6,18 +6,24 @@ import { useSelector } from "react-redux";
 /* Utils */
 import { getCurrentDate } from "../../utils/utils";
 
+/**
+ * 달력으로 기록 보기
+ */
 const Calendar = () => {
   const { year, month, day } = getCurrentDate();
   
   const recordList = useSelector(state => state.recordReducer.payload);
 
+  //달력에 표시
   const [selDate, setSelDate] = useState(`${year}-${month}-${day}`);  
-
   const [markedDates, setMarkedDates] = useState({});
+
+  //해당 날짜 기록
   const [selDateRecord, setSelDateRecord] = useState([]);
 
   const defaultMarkedDates = useRef({});
 
+  //운동 부위별 표시할 마커 색상
   const muscleGroupColors = {
     chest: "red",
     back: "orange",
@@ -29,6 +35,7 @@ const Calendar = () => {
     default: "black",
   };
 
+  //선택한 날짜 표시
   const handleSelDate = date => {
     const prevMarkedDates = {...defaultMarkedDates.current};
 
@@ -40,6 +47,7 @@ const Calendar = () => {
     setMarkedDates(prevMarkedDates);
   };
 
+  //선택한 날짜에 기록들 조회
   const handleSelDateRecord = date => {
     const tempSelDateRecord = recordList.reduce((unique, record) => {
       if(date === record.date)

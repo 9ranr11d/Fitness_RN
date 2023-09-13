@@ -3,7 +3,13 @@ import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 /* Components */
 import RecordModal from "../../components/RecordModal";
 
+
+/**
+ * 타이머 작동
+ * @param {JSON} route restTime: 타이머 시간, numOfSets: 세트 수, tempRecord: 임시저장 값을 저장할 변수
+ */
 const TimerRunning = ({navigation, route}) => {
+  //기록 임시저장/예약
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isReservation, setIsReservation] = useState(false);
 
@@ -11,6 +17,7 @@ const TimerRunning = ({navigation, route}) => {
 
   const tempRecord = useRef(route.params.tempRecord);
 
+  //기록 예약
   const handleReservation = () => {
     setIsReservation(!isReservation);
   };

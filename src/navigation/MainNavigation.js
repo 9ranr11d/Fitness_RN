@@ -13,11 +13,15 @@ import Diary from "../screens/Diary/Diary";
 
 const Tab = createBottomTabNavigator();
 
+/**
+ * 바텀 네비게이션
+ */
 const MainNavigation = () => {
   const dispatch = useDispatch();
 
   const recordReducer = useSelector(state => state.recordReducer);
 
+  //바텀 네비게이션 스타일
   const TabBarIcon = (focused, name) => {
     let iconName, iconSize;
 

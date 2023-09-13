@@ -8,6 +8,10 @@ import { getCurrentDate } from "../../utils/utils";
 import RecordModal from "../../components/RecordModal";
 import NumPicker from "../../components/NumPicker";
 
+/**
+ * 타이머 셋팅
+ * @param {boolean} route.params.isCompleted TimerRunning에서 타이머를 정지없이 완수했는지 여부
+ */
 const TimerSetting = ({navigation, route}) => {
   const { year, month, day } = getCurrentDate();
   
@@ -16,11 +20,13 @@ const TimerSetting = ({navigation, route}) => {
 
   const [numOfSets, setNumOfSets] = useState(0);
 
+  //isRecord: 기록 모달, isTempRecord: 임시저장 모달
   const [isModalVisible, setIsModalVisible] = useState({
     isRecord: false,
     isTempRecord: false,
   });
 
+  //세트 수 증가
   const handleNumOfSetsPlus = () => {
     if(numOfSets < 10) {
       setNumOfSets(numOfSets + 1);
@@ -33,6 +39,7 @@ const TimerSetting = ({navigation, route}) => {
       Alert.alert("Error", "세트 수가 10세트를 넘었습니다.");
   };
 
+  //세트 수 감소
   const handleNumOfSetsMinus = () => {
     if(numOfSets > 0) {
       setNumOfSets(numOfSets - 1);
@@ -62,6 +69,7 @@ const TimerSetting = ({navigation, route}) => {
   const mitArr = ["", "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", ""];
   const secArr = ["", "00", "30", ""];
 
+  //기록 저장
   const saveRecord = (record) => {
     Alert.alert("기록", `'${record.exerciseName}'으로 기록되었습니다.`);
     

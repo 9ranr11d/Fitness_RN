@@ -1,7 +1,7 @@
 /**
  * 
  * @param {number} num ex) 9
- * @returns ex) 09
+ * @returns 한자리 숫자를 빈자리 0을 채워서 반환함 ex) 09
  */
 export const changeTenFomat = num => {
   let result = num;
