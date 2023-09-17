@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native";
 /* DB */
 import realm from "../../db/realm";
+/* Redux */
+import { useDispatch } from "react-redux";
+import { fetchRecord } from "../../../store/actions/recordAction"
 /* Utils */
 import { getCurrentDate } from "../../utils/utils";
 /* Components */
@@ -13,6 +16,8 @@ import NumPicker from "../../components/NumPicker";
  * @param {boolean} route.params.isCompleted TimerRunning에서 타이머를 정지없이 완수했는지 여부
  */
 const TimerSetting = ({navigation, route}) => {
+  const dispatch = useDispatch();
+
   const { year, month, day } = getCurrentDate();
   
   const [currentMit, setCurrentMit] = useState(0);
@@ -92,6 +97,8 @@ const TimerSetting = ({navigation, route}) => {
     }
 
     setNumOfSets(0);
+    
+    dispatch(fetchRecord());
   };
 
   useEffect(() => {

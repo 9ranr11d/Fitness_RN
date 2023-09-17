@@ -185,6 +185,7 @@ const RecordModal = (props) => {
               setNumOfSets(num);
             }}
             isScrollEnabled={!props.constraint}
+            initPosition={numOfSets}
           />
 
           <Text>무게 / 횟수 / 쉬는 시간</Text>
