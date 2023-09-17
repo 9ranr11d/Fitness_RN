@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { StyleSheet, View,  Text, ScrollView, TouchableOpacity, TextInput, Button } from "react-native";
 /* DB */
 import realm from "../../db/realm";
 /* Redux */
 import { useDispatch, useSelector } from "react-redux";
 import { fetchRecord } from "../../../store/actions/recordAction"
+/* Components */
+import RecordModal from "../../components/RecordModal";
 
 /**
  * 기록 검색/조회
@@ -20,15 +22,43 @@ const Diary = () => {
 
   const [searchStr, setSearchStr] = useState("");
 
-  //기록 삭제
-  const delRecord = (obj) => {
-    realm.write(() => {
-      realm.delete(obj);
-    });
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
-    dispatch(fetchRecord());
+  //기록 삭제
+  const delRecord = obj => {
+    try {
+      realm.write(() => {
+        realm.delete(obj);
+      });
+  
+      dispatch(fetchRecord());
+    }catch(error) {
+      console.error("데이터 삭제 중 오류 발생 :", error);
+    }
   };
 
+  //기록 수정
+  const updateRecord = data => {
+    try {
+      const foundRecord = realm.objects("WorkoutRecord").filtered("id = $0", selRecord.current.id)[0];
+
+      realm.write(() => {
+        if(foundRecord) {
+          foundRecord.date = data.date;
+          foundRecord.muscleGroups = data.muscleGroups;
+          foundRecord.exerciseName = data.exerciseName;
+          foundRecord.numOfSets = data.numOfSets;
+          foundRecord.weights = data.weights;
+          foundRecord.repsPerSet = data.repsPerSet;
+          foundRecord.restTimesBtwSets = data.restTimesBtwSets;
+        }
+      })
+    }catch(error) {
+      console.error("데이터 업데이트 중 오류 발생 :", error);
+    }
+  }
+
+  //검색 분류 설정
   const handleSearchMode = num => {
     setSearchMode(num);
   }
@@ -41,8 +71,8 @@ const Diary = () => {
 
     switch(searchMode) {
       case 0: //운동 이름
-        searchResult = recordReducer.payload.filter(
-          item => item.exerciseName.toLowerCase().indexOf(text.toLowerCase()) !== -1
+        searchResult = recordReducer.payload.filter(item =>
+          item.exerciseName.toLowerCase().indexOf(text.toLowerCase()) !== -1
         );
 
         break;
@@ -59,6 +89,17 @@ const Diary = () => {
 
     setRecordList(searchResult)
   };
+
+  const selRecord = useRef({
+    id: null,
+    date: "",
+    muscleGroups: [],
+    exerciseName: "",
+    numOfSets: 0,
+    weights: [],
+    repsPerSet: [],
+    restTimesBtwSets: [],
+  });
 
   useEffect(() => {
     setRecordList(recordReducer.payload);
@@ -93,10 +134,32 @@ const Diary = () => {
             <Text>Repetitions Per Set: {record.repsPerSet.join(", ")}</Text>
             <Text>Rest Times Between Sets: {record.restTimesBtwSets.join(", ")}</Text>
             <Text>--------------------------------------</Text>
+            
             <TouchableOpacity
               onPress={() => {
-                delRecord(record)
+                const tempRecord = {
+                  id: record.id,
+                  date: record.date,
+                  muscleGroups: [...record.muscleGroups],
+                  exerciseName: record.exerciseName,
+                  numOfSets: record.numOfSets,
+                  weights: [...record.weights],
+                  repsPerSet: [...record.repsPerSet],
+                  restTimesBtwSets: [...record.restTimesBtwSets]
+                };
+
+                selRecord.current = tempRecord;
+
+                setIsModalVisible(true);
               }}
+            >
+              <Text>
+                | 수정 |
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => delRecord(record)}
             >
               <Text>
                 | 삭제 |
@@ -106,6 +169,20 @@ const Diary = () => {
           </View>
         ))}
       </ScrollView>
+
+      <RecordModal
+        isVisible={isModalVisible}
+        data={selRecord.current}
+        setInVisible={() => setIsModalVisible(false)}
+        saveRecord={data => {
+          console.log("Return Data :", data);
+          updateRecord(data);
+        }}
+        constraint={false}
+        isScrollEnabled={true}
+        isRecord={true}
+        isReserve={false}
+      />
     </View>
   );
 };

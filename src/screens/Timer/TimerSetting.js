@@ -75,30 +75,35 @@ const TimerSetting = ({navigation, route}) => {
   const secArr = ["", "00", "30", ""];
 
   //기록 저장
-  const saveRecord = (record) => {
-    Alert.alert("기록", `'${record.exerciseName}'으로 기록되었습니다.`);
-    
-    const result = {
-      ...record,
-      id: new Realm.BSON.ObjectId(),
+  const saveRecord = record => {
+    try {
+      const result = {
+        ...record,
+        id: new Realm.BSON.ObjectId(),
+      }
+      
+      realm.write(() => {
+        realm.create("WorkoutRecord", result);
+      });
+  
+      tempRecord.current = {
+        date: `${year}-${month}-${day}`,
+        muscleGroups: [],
+        exerciseName: "",
+        numOfSets: 0,
+        weights: [],
+        repsPerSet: [],
+        restTimesBtwSets: [],
+      }
+  
+      setNumOfSets(0);
+      
+      dispatch(fetchRecord());
+      
+      Alert.alert("기록", `'${record.exerciseName}'으로 기록되었습니다.`);
+    }catch(error) {
+      console.error("데이터 생성 중 오류 발생 :", error);
     }
-    realm.write(() => {
-      realm.create("WorkoutRecord", result);
-    });
-
-    tempRecord.current = {
-      date: `${year}-${month}-${day}`,
-      muscleGroups: [],
-      exerciseName: "",
-      numOfSets: 0,
-      weights: [],
-      repsPerSet: [],
-      restTimesBtwSets: [],
-    }
-
-    setNumOfSets(0);
-    
-    dispatch(fetchRecord());
   };
 
   useEffect(() => {
@@ -106,9 +111,9 @@ const TimerSetting = ({navigation, route}) => {
       handleNumOfSetsPlus();
       
       tempRecord.current = {...route.params?.tempRecord};
-      if(route.params?.isReservation) {
+
+      if(route.params?.isReservation) 
         saveRecord(tempRecord.current);
-      }
     }
   }, [route.params]);
 
@@ -138,17 +143,13 @@ const TimerSetting = ({navigation, route}) => {
         <NumPicker
           numArr={mitArr}
           styles={numPickerStyles}
-          currentNum={(num) => {
-            setCurrentMit(num);
-          }}
+          currentNum={num => setCurrentMit(num)}
         />
 
         <NumPicker
           numArr={secArr}
           styles={numPickerStyles}
-          currentNum={(num) => {
-            setCurrentSec(num);
-          }}
+          currentNum={num => setCurrentSec(num)}
         />
       </View>
 
@@ -215,7 +216,7 @@ const TimerSetting = ({navigation, route}) => {
             isTempRecord: false,
           });
         }}
-        saveRecord={(data) => {
+        saveRecord={data => {
           tempRecord.current = data;
           console.log("Temp Record", tempRecord.current);
           
@@ -236,7 +237,7 @@ const TimerSetting = ({navigation, route}) => {
             isTempRecord: isModalVisible.isTempRecord,
           });
         }}
-        saveRecord={(data) => {
+        saveRecord={data => {
           console.log("Record", data);
           saveRecord(data);
         }}

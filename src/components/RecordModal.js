@@ -10,11 +10,10 @@ import NumPicker from "./NumPicker";
  * @param {boolean} props.constraint 휴식시간 수정 가능 여부
  * @param {boolean} props.isScrollEnabled 세트 수 수정 가능 여부
  * @param {boolean} props.isRecord 기록 버튼 유무
- * @param {boolean} props.isReserve 예약 버튼 유무
  * @param {Function} props.changeReservation 예약 버튼 클릭 시
- * @param {boolean} props.isReserve 예약 버튼 클릭 여부
+ * @param {boolean} props.isReserve 예약 버튼 유무
  */
-const RecordModal = (props) => {
+const RecordModal = props => {
   //드롭 다운 메뉴 props
   const [dropDownOpen, setDropDownOpen] = useState(false);
   const [selMuscleGroups, setSelMuscleGroups] = useState([]);
@@ -63,7 +62,7 @@ const RecordModal = (props) => {
             maxLength={3}
             style={styles.trainingSessionInput}
             value={trainingSession.weights[i]}
-            onChangeText={(text) => {
+            onChangeText={text => {
               const prevTrainingSession = {...trainingSession};
               prevTrainingSession.weights[i] = text;
               setTrainingSession(prevTrainingSession);
@@ -77,7 +76,7 @@ const RecordModal = (props) => {
             maxLength={3}
             style={styles.trainingSessionInput}
             value={trainingSession.repsPerSet[i]}
-            onChangeText={(text) => {
+            onChangeText={text => {
               const prevTrainingSession = {...trainingSession};
               prevTrainingSession.repsPerSet[i] = text;
               setTrainingSession(prevTrainingSession);
@@ -91,7 +90,7 @@ const RecordModal = (props) => {
             maxLength={3}
             style={styles.trainingSessionInput}
             value={trainingSession.restTimesBtwSets[i]}
-            onChangeText={(text) => {
+            onChangeText={text => {
               const prevTrainingSession = {...trainingSession};
               prevTrainingSession.restTimesBtwSets[i] = text;
               setTrainingSession(prevTrainingSession);
@@ -181,9 +180,7 @@ const RecordModal = (props) => {
           <NumPicker
             numArr={tenArr}
             styles={numPickerStyles}
-            currentNum={(num) => {
-              setNumOfSets(num);
-            }}
+            currentNum={num => setNumOfSets(num)}
             isScrollEnabled={!props.constraint}
             initPosition={numOfSets}
           />

@@ -64,9 +64,7 @@ const TimerRunning = ({navigation, route}) => {
       <View style={styles.btnBox}>
         <TouchableOpacity
           style={styles.btn}
-          onPress={() => {
-            setIsModalVisible(true);
-          }}
+          onPress={() => setIsModalVisible(true)}
         >
           <Text style={styles.btnStr}>
             임시 저장/{isReservation ? "예약 취소" : "예약"}
@@ -86,10 +84,8 @@ const TimerRunning = ({navigation, route}) => {
       <RecordModal
         isVisible={isModalVisible}
         data={tempRecord.current}
-        setInVisible={() => {
-          setIsModalVisible(false);
-        }}
-        saveRecord={(data) => {
+        setInVisible={() => setIsModalVisible(false)}
+        saveRecord={data => {
           tempRecord.current = data;
           console.log("Temp Record", tempRecord.current);
         }}

@@ -8,13 +8,13 @@ import { ScrollView, StyleSheet, View, Text } from "react-native";
  * @param {Function} props.currentNum 선택된 숫자
  * @param {}
  */
-const NumPicker = (props) => {
+const NumPicker = props => {
   const oneScrollHeight = props.styles.oneScrollHeight;
 
   const scrollRef = useRef(null);
   
   //한칸씩 내려가게
-  const handleOnScroll = (e) => {
+  const handleOnScroll = e => {
     const index = Math.round(e.nativeEvent.contentOffset.y / oneScrollHeight);
 
     if (index < 0) return;
@@ -39,7 +39,7 @@ const NumPicker = (props) => {
       <ScrollView
         ref={scrollRef}
         showsVerticalScrollIndicator={false}
-        onScrollEndDrag={(e) => handleOnScroll(e)}
+        onScrollEndDrag={handleOnScroll}
         scrollEventThrottle={0}
         decelerationRate={"fast"}
         scrollEnabled={props.isScrollEnabled}

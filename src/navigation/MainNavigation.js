@@ -55,8 +55,6 @@ const MainNavigation = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    console.log("Record Reducer :", recordReducer);
-    
     if(recordReducer.msg !== "")
       Alert.alert("ERROR", `데이터를 받아오지 못했습니다.\n Error: ${recordReducer.msg}`);
   }, [recordReducer]);
