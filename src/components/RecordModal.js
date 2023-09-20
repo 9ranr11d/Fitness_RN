@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Modal, StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, Alert } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 /* Components */
@@ -25,6 +25,7 @@ const RecordModal = props => {
     { label: "어깨", value: "shoulders" },
     { label: "이두", value: "biceps" },
     { label: "삼두", value: "triceps" },
+    { label: "기타", value: "etc" },
   ]);
 
   const [numOfSets, setNumOfSets] = useState(0);
@@ -36,6 +37,8 @@ const RecordModal = props => {
     repsPerSet: [],
     restTimesBtwSets: [],
   });
+
+  const routineNum = useRef(0);
 
   const numPickerStyles = {
     oneScrollHeight: 30,
@@ -209,7 +212,9 @@ const RecordModal = props => {
                       repsPerSet: trainingSession.repsPerSet,
                       restTimesBtwSets: trainingSession.restTimesBtwSets,
                     });
+
                     props.setInVisible();
+                    
                     handleReset();
                   }}
                 >
@@ -223,6 +228,14 @@ const RecordModal = props => {
             <TouchableOpacity
               style={styles.btn}
               onPress={() => {
+                // if(selMuscleGroups.length === 0)
+                //   setSelMuscleGroups({ label: "기타", value: "etc" });
+
+                // if(exerciseName === "")
+                //   setExerciseName(`routine${routineNum}`);
+
+                // console.log("TrainingSessiton :", trainingSession);
+
                 props.saveRecord({
                   date: props.data.date,
                   muscleGroups: selMuscleGroups,
@@ -232,7 +245,9 @@ const RecordModal = props => {
                   repsPerSet: trainingSession.repsPerSet,
                   restTimesBtwSets: trainingSession.restTimesBtwSets,
                 });
+
                 props.setInVisible();
+
                 handleReset();
               }}
             >
@@ -243,6 +258,7 @@ const RecordModal = props => {
               style={styles.btn}
               onPress={() => {
                 props.setInVisible();
+
                 handleReset();
               }}
             >

@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { StyleSheet, View,  Text, ScrollView, TouchableOpacity, TextInput, Button } from "react-native";
+import { StyleSheet, View,  Text, TouchableOpacity, TextInput, Button, FlatList } from "react-native";
 /* DB */
 import realm from "../../db/realm";
 /* Redux */
 import { useDispatch, useSelector } from "react-redux";
-import { fetchRecord } from "../../../store/actions/recordAction"
+import { fetchRecord } from "../../../store/actions/recordAction";
 /* Components */
 import RecordModal from "../../components/RecordModal";
 
@@ -16,22 +16,41 @@ const Diary = () => {
 
   const recordReducer = useSelector(state => state.recordReducer);
 
-  const [searchMode, setSearchMode] = useState(0);
+  const [searchMode, setSearchMode] = useState("");
   
-  const [recordList, setRecordList] = useState([]);
+  const allRecord = useRef([]);
+  const [searchRecord, setSearchRecord] = useState([]);
 
   const [searchStr, setSearchStr] = useState("");
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
+  const selRecord = useRef({
+    id: null,
+    date: "",
+    muscleGroups: [],
+    exerciseName: "",
+    numOfSets: 0,
+    weights: [],
+    repsPerSet: [],
+    restTimesBtwSets: [],
+  });
+
   //기록 삭제
   const delRecord = obj => {
     try {
+      const foundRecord = realm.objects("WorkoutRecord").filtered("id = $0", obj.id)[0];
+
       realm.write(() => {
-        realm.delete(obj);
+        if(foundRecord) {
+          realm.delete(foundRecord);
+          
+          dispatch(fetchRecord());
+          console.log("데이터 삭제 완료.");
+        }
       });
   
-      dispatch(fetchRecord());
+      
     }catch(error) {
       console.error("데이터 삭제 중 오류 발생 :", error);
     }
@@ -51,6 +70,9 @@ const Diary = () => {
           foundRecord.weights = data.weights;
           foundRecord.repsPerSet = data.repsPerSet;
           foundRecord.restTimesBtwSets = data.restTimesBtwSets;
+
+          dispatch(fetchRecord());
+          console.log("데이터 업데이트 완료.");
         }
       })
     }catch(error) {
@@ -70,46 +92,82 @@ const Diary = () => {
     let searchResult = null;
 
     switch(searchMode) {
-      case 0: //운동 이름
-        searchResult = recordReducer.payload.filter(item =>
+      case "name": //운동 이름
+        searchResult = allRecord.current.filter(item =>
           item.exerciseName.toLowerCase().indexOf(text.toLowerCase()) !== -1
         );
 
         break;
-      case 1: //운동 부위
-        searchResult = recordReducer.payload.filter(record =>
+      case "group": //운동 부위
+        searchResult = allRecord.current.filter(record =>
           record.muscleGroups.some(group => group.toLowerCase().includes(text.toLowerCase()))
         );
 
         break;
       default:
-        searchResult = recordList;
+        searchResult = allRecord.current;
         break;
     }
 
-    setRecordList(searchResult)
+    setSearchRecord(searchResult);
   };
 
-  const selRecord = useRef({
-    id: null,
-    date: "",
-    muscleGroups: [],
-    exerciseName: "",
-    numOfSets: 0,
-    weights: [],
-    repsPerSet: [],
-    restTimesBtwSets: [],
-  });
+  const Item = ({record}) => (
+    <View>
+      <Text>Id: {record.id.toString()}</Text>
+      <Text>Date: {record.date}</Text>
+      <Text>Muscle Groups: {record.muscleGroups.join(", ")}</Text>
+      <Text>Exercise Name: {record.exerciseName}</Text>
+      <Text>Num of Sets: {record.numOfSets}</Text>
+      <Text>Weight: {record.weights.join(", ")}</Text>
+      <Text>Repetitions Per Set: {record.repsPerSet.join(", ")}</Text>
+      <Text>Rest Times Between Sets: {record.restTimesBtwSets.join(", ")}</Text>
+      <Text>--------------------------------------</Text>
+      
+      <TouchableOpacity
+        onPress={() => {
+          const tempRecord = {
+            id: record.id,
+            date: record.date,
+            muscleGroups: [...record.muscleGroups],
+            exerciseName: record.exerciseName,
+            numOfSets: record.numOfSets,
+            weights: [...record.weights],
+            repsPerSet: [...record.repsPerSet],
+            restTimesBtwSets: [...record.restTimesBtwSets]
+          };
+
+          selRecord.current = tempRecord;
+
+          setIsModalVisible(true);
+        }}
+      >
+        <Text>
+          | 수정 |
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={() => delRecord(record)}
+      >
+        <Text>
+          | 삭제 |
+        </Text>
+      </TouchableOpacity>
+      <Text>--------------------------------------</Text>
+    </View>
+  );
 
   useEffect(() => {
-    setRecordList(recordReducer.payload);
+    allRecord.current = recordReducer.payload;
+    handleSearchInput("");
   }, [recordReducer]);
 
   return(
     <View>
       <View>
-        <Button title="이름" onPress={() => handleSearchMode(0)} />
-        <Button title="부위" onPress={() => handleSearchMode(1)} />
+        <Button title="이름" onPress={() => handleSearchMode("name")} />
+        <Button title="부위" onPress={() => handleSearchMode("group")} />
       </View>
 
       <TextInput
@@ -119,56 +177,24 @@ const Diary = () => {
         onChangeText={handleSearchInput}
       />
 
-      <ScrollView>
-        <Text>웨이트 운동 기록</Text>
+      <Text>웨이트 운동 기록</Text>
         
-        <Text>--------------------------------------</Text>
-        {recordList.map((record, idx) => (
-          <View key={idx}>
-            <Text>Id: {record.id.toString()}</Text>
-            <Text>Date: {record.date}</Text>
-            <Text>Muscle Groups: {record.muscleGroups.join(", ")}</Text>
-            <Text>Exercise Name: {record.exerciseName}</Text>
-            <Text>Num of Sets: {record.numOfSets}</Text>
-            <Text>Weight: {record.weights.join(", ")}</Text>
-            <Text>Repetitions Per Set: {record.repsPerSet.join(", ")}</Text>
-            <Text>Rest Times Between Sets: {record.restTimesBtwSets.join(", ")}</Text>
-            <Text>--------------------------------------</Text>
-            
-            <TouchableOpacity
-              onPress={() => {
-                const tempRecord = {
-                  id: record.id,
-                  date: record.date,
-                  muscleGroups: [...record.muscleGroups],
-                  exerciseName: record.exerciseName,
-                  numOfSets: record.numOfSets,
-                  weights: [...record.weights],
-                  repsPerSet: [...record.repsPerSet],
-                  restTimesBtwSets: [...record.restTimesBtwSets]
-                };
+      <Text>--------------------------------------</Text>
 
-                selRecord.current = tempRecord;
-
-                setIsModalVisible(true);
-              }}
-            >
-              <Text>
-                | 수정 |
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => delRecord(record)}
-            >
-              <Text>
-                | 삭제 |
-              </Text>
-            </TouchableOpacity>
-            <Text>--------------------------------------</Text>
-          </View>
-        ))}
-      </ScrollView>
+      {
+        searchRecord.length !== 0
+          ? searchRecord[0].isValid()
+            ?
+              <>
+                <FlatList
+                  data={searchRecord}
+                  renderItem={({item}) => <Item record={item} />}
+                  keyExtractor={item => item.id.toString()}
+                />
+              </>
+            : <Text>삭제된 기록입니다.</Text>
+          : <Text>기록이 없습니다.</Text>
+      }
 
       <RecordModal
         isVisible={isModalVisible}

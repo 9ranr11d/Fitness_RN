@@ -5,7 +5,7 @@ export const fetchRecord = () => dispatch => {
   try {
     const recordList = realm.objects("WorkoutRecord");
     
-    console.log("Record List :", recordList);
+    console.log("Get Record list:", recordList);
 
     dispatch({type: FETCH_RECORD, payload: recordList});
   }catch(error) {
