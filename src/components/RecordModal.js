@@ -14,7 +14,7 @@ import NumPicker from "./NumPicker";
  * @param {boolean} props.isReserve 예약 버튼 유무
  */
 const RecordModal = props => {
-  //드롭 다운 메뉴 props
+  // 드롭 다운 메뉴 props
   const [dropDownOpen, setDropDownOpen] = useState(false);
   const [selMuscleGroups, setSelMuscleGroups] = useState([]);
   const [muscleGroups, setMuscleGroups] = useState([
@@ -38,8 +38,6 @@ const RecordModal = props => {
     restTimesBtwSets: [],
   });
 
-  const routineNum = useRef(0);
-
   const numPickerStyles = {
     oneScrollHeight: 30,
     fontSize: 15,
@@ -47,7 +45,7 @@ const RecordModal = props => {
 
   const tenArr = [ "", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", ""];
 
-  //세트 수에 따라 TextInput 셋팅
+  // 세트 수에 따라 TextInput 셋팅
   const initTrainingSession = () => {
     const _trainingSession = [];
 
@@ -154,20 +152,20 @@ const RecordModal = props => {
           <Text>운동 부위</Text>
 
           <View>
-              <DropDownPicker
-                open={dropDownOpen}
-                value={selMuscleGroups}
-                items={muscleGroups}
-                setOpen={setDropDownOpen}
-                setValue={setSelMuscleGroups}
-                setItems={setMuscleGroups}
-                multiple={true}
-                min={1}
-                max={muscleGroups.length}
-                placeholder="운동한 부위를 선택해주세요."
-                mode="BADGE"
-                showBadgeDot={false}
-              />
+            <DropDownPicker
+              open={dropDownOpen}
+              value={selMuscleGroups}
+              items={muscleGroups}
+              setOpen={setDropDownOpen}
+              setValue={setSelMuscleGroups}
+              setItems={setMuscleGroups}
+              multiple={true}
+              min={1}
+              max={muscleGroups.length}
+              placeholder="운동한 부위를 선택해주세요."
+              mode="BADGE"
+              showBadgeDot={false}
+            />
           </View>
 
           <Text>운동 이름</Text>
@@ -228,22 +226,48 @@ const RecordModal = props => {
             <TouchableOpacity
               style={styles.btn}
               onPress={() => {
-                // if(selMuscleGroups.length === 0)
-                //   setSelMuscleGroups({ label: "기타", value: "etc" });
+                /**
+                 * 운동 부위, 운동 이름, 운동 무게, 운동 세트 당 횟수, 세트 사이 쉬는 시간이
+                 * 빈값이면 "0"으로 채움
+                 */
+                let resultMuscleGroups = {};
+                let resultExerciseName = "";
+                let resultWeights = [];
+                let resultRepsPerSet = [];
+                let resultRestTimesBtwSets = [];
 
-                // if(exerciseName === "")
-                //   setExerciseName(`routine${routineNum}`);
+                if(selMuscleGroups.length !== 0)
+                  resultMuscleGroups = selMuscleGroups;
+                else
+                  resultMuscleGroups = ["etc"];
 
-                // console.log("TrainingSessiton :", trainingSession);
+                if(exerciseName !== "")
+                  resultExerciseName = exerciseName;
+                else
+                  resultExerciseName = "Temp exercise name";
+
+                for(let i = 0; i < numOfSets; i++) {
+                  trainingSession.weights[i] === undefined
+                    ? resultWeights[i] = "0"
+                    : resultWeights[i] = trainingSession.weights[i];
+
+                  trainingSession.repsPerSet[i] === undefined
+                    ? resultRepsPerSet = "0"
+                    : resultRepsPerSet = trainingSession.repsPerSet[i];
+                  
+                  trainingSession.restTimesBtwSets = trainingSession.restTimesBtwSets[i]
+                    ? resultRestTimesBtwSets = "0"
+                    : resultRestTimesBtwSets = trainingSession.restTimesBtwSets[i];
+                };
 
                 props.saveRecord({
                   date: props.data.date,
-                  muscleGroups: selMuscleGroups,
-                  exerciseName: exerciseName,
+                  muscleGroups: resultMuscleGroups,
+                  exerciseName: resultExerciseName,
                   numOfSets: numOfSets,
-                  weights: trainingSession.weights,
-                  repsPerSet: trainingSession.repsPerSet,
-                  restTimesBtwSets: trainingSession.restTimesBtwSets,
+                  weights: resultWeights,
+                  repsPerSet: resultRepsPerSet,
+                  restTimesBtwSets: resultRestTimesBtwSets,
                 });
 
                 props.setInVisible();

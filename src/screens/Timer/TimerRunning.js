@@ -17,7 +17,7 @@ const TimerRunning = ({navigation, route}) => {
 
   const tempRecord = useRef(route.params.tempRecord);
 
-  //기록 예약
+  // 기록 예약
   const handleReservation = () => {
     setIsReservation(!isReservation);
   };

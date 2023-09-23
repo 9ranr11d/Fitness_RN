@@ -13,7 +13,7 @@ const NumPicker = props => {
 
   const scrollRef = useRef(null);
   
-  //한칸씩 내려가게
+  // 한칸씩 내려가게
   const handleOnScroll = e => {
     const index = Math.round(e.nativeEvent.contentOffset.y / oneScrollHeight);
 

@@ -21,7 +21,7 @@ const MainNavigation = () => {
 
   const recordReducer = useSelector(state => state.recordReducer);
 
-  //바텀 네비게이션 스타일
+  // 바텀 네비게이션 스타일
   const TabBarIcon = (focused, name) => {
     let iconName, iconSize;
 

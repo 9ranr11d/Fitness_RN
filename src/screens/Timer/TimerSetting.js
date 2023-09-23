@@ -25,13 +25,13 @@ const TimerSetting = ({navigation, route}) => {
 
   const [numOfSets, setNumOfSets] = useState(0);
 
-  //isRecord: 기록 모달, isTempRecord: 임시저장 모달
+  // isRecord: 기록 모달, isTempRecord: 임시저장 모달
   const [isModalVisible, setIsModalVisible] = useState({
     isRecord: false,
     isTempRecord: false,
   });
 
-  //세트 수 증가
+  // 세트 수 증가
   const handleNumOfSetsPlus = () => {
     if(numOfSets < 10) {
       setNumOfSets(numOfSets + 1);
@@ -44,7 +44,7 @@ const TimerSetting = ({navigation, route}) => {
       Alert.alert("Error", "세트 수가 10세트를 넘었습니다.");
   };
 
-  //세트 수 감소
+  // 세트 수 감소
   const handleNumOfSetsMinus = () => {
     if(numOfSets > 0) {
       setNumOfSets(numOfSets - 1);
@@ -74,7 +74,7 @@ const TimerSetting = ({navigation, route}) => {
   const mitArr = ["", "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", ""];
   const secArr = ["", "00", "30", ""];
 
-  //기록 저장
+  // 기록 저장
   const saveRecord = record => {
     try {
       const result = {

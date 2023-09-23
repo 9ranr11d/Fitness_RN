@@ -8,7 +8,6 @@ const initState = {
 const recordReducer = (state = initState, action) => {
   switch(action.type) {
     case FETCH_RECORD:
-      console.log("In RecordReducer")
       return {
         ...state,
         payload: action.payload,

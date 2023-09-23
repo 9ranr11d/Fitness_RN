@@ -21,13 +21,15 @@ const Calendar = () => {
   
   const recordReducer = useSelector(state => state.recordReducer);
 
-  //달력에 표시
+  // 달력에 표시
   const [selDate, setSelDate] = useState(`${year}-${month}-${day}`);  
   const [markedDates, setMarkedDates] = useState({});
 
-  const allRecord = useRef([]);
+  const allRecord = useRef([]); 
 
-  //해당 날짜 기록
+  const uniqueNum = useRef(0);
+
+  // 해당 날짜 기록
   const [selDateRecord, setSelDateRecord] = useState([]);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -45,7 +47,7 @@ const Calendar = () => {
     restTimesBtwSets: [],
   });
 
-  //운동 부위별 표시할 마커 색상
+  // 운동 부위별 표시할 마커 색상
   const muscleGroupColors = {
     chest: "red",
     back: "orange",
@@ -54,10 +56,10 @@ const Calendar = () => {
     shoulders: "blue",
     biceps: "navy",
     triceps: "purple",
-    etc: "etc",
+    etc: "black",
   };
 
-  //선택한 날짜 표시
+  // 선택한 날짜 표시
   const handleSelDate = date => {
     const prevMarkedDates = {...defaultMarkedDates.current};
 
@@ -69,7 +71,7 @@ const Calendar = () => {
     setMarkedDates(prevMarkedDates);
   };
 
-  //선택한 날짜에 기록들 조회
+  // 선택한 날짜에 기록들 조회
   const handleSelDateRecord = date => {
     const tempSelDateRecord = allRecord.current.reduce((unique, record) => {
       if(date === record.date)
@@ -81,7 +83,7 @@ const Calendar = () => {
     setSelDateRecord(tempSelDateRecord);
   };
 
-   //기록 삭제
+   // 기록 삭제
    const delRecord = obj => {
     try {
       const foundRecord = realm.objects("WorkoutRecord").filtered("id = $0", obj.id)[0];
@@ -99,7 +101,7 @@ const Calendar = () => {
     }
   };
 
-  //기록 수정
+  // 기록 수정
   const updateRecord = data => {
     try {
       const foundRecord = realm.objects("WorkoutRecord").filtered("id = $0", selRecord.current.id)[0];
@@ -138,8 +140,8 @@ const Calendar = () => {
         defaultMarkedDates.current[date] = {dots: []};
   
       muscleGroups.forEach(group => {
-        const color = muscleGroupColors[group] || muscleGroupColors[etc];
-        defaultMarkedDates.current[date].dots.push({key: `${date}${group}`, color: color});
+        const color = muscleGroupColors[group];
+        defaultMarkedDates.current[date].dots.push({key: `${date}${group}${uniqueNum.current++}`, color: color});
       });
   
       setMarkedDates(defaultMarkedDates.current);

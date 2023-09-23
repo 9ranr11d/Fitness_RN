@@ -36,7 +36,7 @@ const Diary = () => {
     restTimesBtwSets: [],
   });
 
-  //기록 삭제
+  // 기록 삭제
   const delRecord = obj => {
     try {
       const foundRecord = realm.objects("WorkoutRecord").filtered("id = $0", obj.id)[0];
@@ -56,7 +56,7 @@ const Diary = () => {
     }
   };
 
-  //기록 수정
+  // 기록 수정
   const updateRecord = data => {
     try {
       const foundRecord = realm.objects("WorkoutRecord").filtered("id = $0", selRecord.current.id)[0];
@@ -80,25 +80,25 @@ const Diary = () => {
     }
   }
 
-  //검색 분류 설정
+  // 검색 분류 설정
   const handleSearchMode = num => {
     setSearchMode(num);
   }
 
-  //검색창
+  // 검색창
   const handleSearchInput = text => {
     setSearchStr(text);
 
     let searchResult = null;
 
     switch(searchMode) {
-      case "name": //운동 이름
+      case "name": // 운동 이름
         searchResult = allRecord.current.filter(item =>
           item.exerciseName.toLowerCase().indexOf(text.toLowerCase()) !== -1
         );
 
         break;
-      case "group": //운동 부위
+      case "group": // 운동 부위
         searchResult = allRecord.current.filter(record =>
           record.muscleGroups.some(group => group.toLowerCase().includes(text.toLowerCase()))
         );
